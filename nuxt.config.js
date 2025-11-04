@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
   pages: true,
-  srcDir: "app/", // 确保你的目录结构是 app/ 下包含 assets、components 等
+  srcDir: "src/", // 确保你的目录结构是 src/ 下包含 assets、components 等
 
   // 模块配置（核心：仅保留 @element-plus/nuxt 和 @unocss/nuxt）
   modules: ["@element-plus/nuxt", "@unocss/nuxt"],
@@ -44,6 +44,13 @@ export default defineNuxtConfig({
     },
     // cache: true, // 开启缓存
   },
+
+  // 重新配置 Nuxt 页面目录（基于 srcDir: "src/"）
+  pages: {
+    dirs: ["~/pages"], // 对应 src/pages
+  },
+
+  srcDir: "src/", // 确保你的目录结构是 src/ 下包含 assets、components 等
 
   // 组件自动导入（Nuxt 原生配置，无需与 unplugin 重复）
   components: {
