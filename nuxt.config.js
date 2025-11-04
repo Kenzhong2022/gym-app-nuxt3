@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   ssr: false,
-  pages: true,
+  // pages: true,
   srcDir: "app/", // 确保你的目录结构是 app/ 下包含 assets、components 等
 
   // 模块配置（核心：仅保留 @element-plus/nuxt 和 @unocss/nuxt）
