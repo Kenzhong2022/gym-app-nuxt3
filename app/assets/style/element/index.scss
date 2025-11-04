@@ -1,0 +1,15 @@
+// 重写组件核心样式，关联到 CSS 变量
+.el-button--primary {
+  background-color: var(--el-color-primary);
+  border-color: var(--el-color-primary);
+}
+
+.el-button--primary:hover {
+  // 这里可以用 CSS 变量 + 计算（如果需要动态衍生色）
+  background-color: color-mix(in srgb, var(--el-color-primary), white 10%);
+}
+
+// 其他组件（输入框、复选框等）类似，按需覆盖核心颜色样式
+.el-input__wrapper.is-focus {
+  border-color: var(--el-color-primary);
+}
