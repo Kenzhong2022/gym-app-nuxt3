@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   // ssr: false,
   pages: true,
-  srcDir: "app/", // 确保你的目录结构是 src/ 下包含 assets、components 等
+  srcDir: "app/", // 确保你的目录结构是 app/ 下包含 assets、components 等
 
   // 模块配置（核心：仅保留 @element-plus/nuxt 和 @unocss/nuxt）
   modules: ["@element-plus/nuxt", "@unocss/nuxt"],
