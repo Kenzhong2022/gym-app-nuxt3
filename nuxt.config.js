@@ -5,31 +5,31 @@ import { defineNuxtConfig } from "nuxt/config";
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  ssr: false,
+  // ssr: false,
   pages: true,
-  srcDir: "src/", // 确保你的目录结构是 src/ 下包含 assets、components 等
+  srcDir: "app/", // 确保你的目录结构是 src/ 下包含 assets、components 等
 
   // 模块配置（核心：仅保留 @element-plus/nuxt 和 @unocss/nuxt）
   modules: ["@element-plus/nuxt", "@unocss/nuxt"],
 
   // 样式文件（确保路径正确，基于 srcDir: "app/"）
-  css: [
-    "@/assets/style/main.css", // 对应 app/assets/style/main.css
-    "@/assets/style/element/index.scss", // 自定义 Element 样式
-  ],
+  // css: [
+  //   "@/assets/style/main.css", // 对应 app/assets/style/main.css
+  //   "@/assets/style/element/index.scss", // 自定义 Element 样式
+  // ],
 
   // Vite 配置（移除重复的插件，只保留必要的预处理器配置）
-  vite: {
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `
-            @use "@/assets/style/element-variables.scss" as element;
-          `, // 引入自定义变量（用于主题定制）
-        },
-      },
-    },
-  },
+  // vite: {
+  //   css: {
+  //     preprocessorOptions: {
+  //       scss: {
+  //         additionalData: `
+  //           @use "@/assets/style/element-variables.scss" as element;
+  //         `, // 引入自定义变量（用于主题定制）
+  //       },
+  //     },
+  //   },
+  // },
 
   // Element Plus 模块配置（由 @element-plus/nuxt 提供）
   elementPlus: {
@@ -44,13 +44,6 @@ export default defineNuxtConfig({
     },
     // cache: true, // 开启缓存
   },
-
-  // 重新配置 Nuxt 页面目录（基于 srcDir: "src/"）
-  pages: {
-    dirs: ["~/pages"], // 对应 src/pages
-  },
-
-  srcDir: "src/", // 确保你的目录结构是 src/ 下包含 assets、components 等
 
   // 组件自动导入（Nuxt 原生配置，无需与 unplugin 重复）
   components: {
