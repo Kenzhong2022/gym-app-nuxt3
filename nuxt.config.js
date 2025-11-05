@@ -42,6 +42,7 @@ export default defineNuxtConfig({
       size: "small",
       zIndex: 3000,
     },
+    zIndex: 2000,
     // cache: true, // 开启缓存
   },
 

@@ -57,6 +57,7 @@
       title="设置"
       width="600px"
       :before-close="handleClose"
+      class="z-10"
     >
       <h3 class="text-lg font-medium mb-4">奖品管理</h3>
       <!-- 位置变化提示 -->
@@ -68,8 +69,6 @@
           <span class="font-medium">💡 提示：</span>
           更改奖品位置时，如果目标位置已被占用，系统会自动将冲突的奖品移动到第一个空闲可用位置。[顺时针从左上角开始是
           0 ]
-          {{ tempPrizeList[0] }}
-          {{ tempPrizeList[1] }}
         </p>
       </div>
       <!-- 奖品设置 -->
@@ -81,7 +80,7 @@
           class="mb-4 prize-table"
           row-class-name="prize-row"
         >
-          <el-table-column prop="id" label="ID" width="60" />
+          <el-table-column prop="id" label="九宫格位置" width="120" />
           <el-table-column label="奖品名称" width="180">
             <template #default="scope">
               <el-input
@@ -102,14 +101,14 @@
               />
             </template>
           </el-table-column>
-          <el-table-column label="位置" width="80">
+          <el-table-column label="交换位置" width="80">
             <template #default="scope">
               <el-select
                 v-if="isEditMode"
                 v-model="scope.row.index"
                 size="small"
                 placeholder="位置"
-                @change="handlePositionChange(scope.row, scope.$index)"
+                @change="handlePositionChange(scope.row, scope.row.index)"
               >
                 <el-option
                   v-for="pos in availablePositions"
@@ -134,22 +133,32 @@
           </el-table-column>
         </el-table>
         <!-- 编辑模式切换按钮 -->
-        <div class="mb-4 flex justify-end">
+        <div class="mb-4 flex justify-between items-center">
           <el-button
-            v-if="isEditMode"
-            @click="cancelEditMode"
+            v-if="!isEditMode"
+            @click="resetToDefault"
             size="small"
-            class="mr-2"
+            type="warning"
           >
-            取消编辑
+            🔄 重置默认
           </el-button>
-          <el-button
-            :type="isEditMode ? 'success' : 'primary'"
-            @click="toggleEditMode"
-            size="small"
-          >
-            {{ isEditMode ? "保存编辑" : "编辑模式" }}
-          </el-button>
+          <div class="flex justify-end">
+            <el-button
+              v-if="isEditMode"
+              @click="cancelEditMode"
+              size="small"
+              class="mr-2"
+            >
+              取消编辑
+            </el-button>
+            <el-button
+              :type="isEditMode ? 'success' : 'primary'"
+              @click="toggleEditMode"
+              size="small"
+            >
+              {{ isEditMode ? "保存编辑" : "编辑模式" }}
+            </el-button>
+          </div>
         </div>
         <!-- 新增奖品表单 -->
         <div class="flex gap-2 mb-4" v-if="isEditMode">
@@ -210,6 +219,86 @@ const settings = ref({
   speed: "normal",
 });
 
+// 本地存储键名
+const STORAGE_KEY = "lottery-prize-list";
+
+// 本地存储相关方法
+const saveToLocalStorage = (data) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    console.log("[本地存储] 数据已保存到本地存储");
+  } catch (error) {
+    console.error("[本地存储] 保存数据失败:", error);
+  }
+};
+// 从本地存储加载数据
+const loadFromLocalStorage = () => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      console.log("[本地存储] 从本地存储加载数据:", data);
+      return data;
+    }
+  } catch (error) {
+    console.error("[本地存储] 加载数据失败:", error);
+  }
+  return null;
+};
+
+// 清除本地存储数据
+const clearLocalStorage = () => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    console.log("[本地存储] 本地存储数据已清除");
+  } catch (error) {
+    console.error("[本地存储] 清除数据失败:", error);
+  }
+};
+
+// 初始化奖品列表（从本地存储加载或使用默认值）
+const initializePrizeList = () => {
+  const storedData = loadFromLocalStorage();
+  if (storedData && Array.isArray(storedData) && storedData.length === 8) {
+    // 验证数据结构完整性
+    const isValidData = storedData.every(
+      (prize) =>
+        prize &&
+        typeof prize.id === "number" &&
+        typeof prize.name === "string" &&
+        typeof prize.required === "boolean" &&
+        typeof prize.index === "number"
+    );
+
+    if (isValidData) {
+      console.log("[初始化] 使用本地存储的数据");
+      ElMessage.success("已加载本地存储数据");
+      return storedData;
+    } else {
+      console.warn("[初始化] 本地存储数据格式无效，使用默认数据");
+    }
+  }
+
+  console.log("[初始化] 使用默认奖品数据");
+  // 默认奖品数据
+  return [
+    { id: 1, name: "AI分析儀", required: false, index: 1, oldIdx: 1 },
+    { id: 2, name: "藍牙耳機", required: false, index: 2, oldIdx: 2 },
+    { id: 3, name: "VIP卡", required: false, index: 3, oldIdx: 3 },
+    { id: 4, name: "AI分析儀", required: false, index: 4, oldIdx: 4 },
+    { id: 5, name: "藍牙耳機", required: false, index: 5, oldIdx: 5 },
+    { id: 6, name: "VIP卡", required: false, index: 6, oldIdx: 6 },
+    { id: 7, name: "AI分析仪", required: false, index: 7, oldIdx: 7 },
+    { id: 8, name: "蓝牙耳机", required: true, index: 8, oldIdx: 8 },
+  ];
+};
+// 重置为默认数据
+const resetToDefault = () => {
+  clearLocalStorage();
+  prizeList.value = initializePrizeList();
+  ElMessage.success("已重置为默认奖品数据");
+};
+
 /**
  * "九宫格" 8 个奖品格按从左到右、从上到下跳过中心按钮的顺序，依次对应后端 prizes 数组的第 0~7 号元素：
  * 1 号格 → prizes[0]
@@ -221,17 +310,8 @@ const settings = ref({
  * 8 号格 → prizes[5]
  * 9 号格 → prizes[4]
  */
-// 奖品列表
-const prizeList = ref([
-  { id: 1, name: "一等奖 🏆", required: false, index: 0 },
-  { id: 2, name: "二等奖 🥈", required: false, index: 1 },
-  { id: 3, name: "三等奖 🥉", required: false, index: 2 },
-  { id: 4, name: "四等奖 🎁", required: false, index: 3 },
-  { id: 5, name: "五等奖 🎈", required: false, index: 5 },
-  { id: 6, name: "六等奖 🎊", required: false, index: 6 },
-  { id: 7, name: "七等奖 🎉", required: false, index: 7 },
-  { id: 8, name: "谢谢参与 💝", required: true, index: 8 },
-]);
+// 奖品列表 - 使用初始化函数获取数据
+const prizeList = ref(initializePrizeList());
 
 // 监听奖品列表变化
 watch(
@@ -319,9 +399,9 @@ const isEditMode = ref(false);
 // 临时奖品列表（用于编辑）
 const tempPrizeList = ref([]);
 
-// 可用位置列表（0-8，跳过中心位置4）
+// 可用位置列表
 const availablePositions = computed(() => {
-  return [0, 1, 2, 3, 5, 6, 7, 8];
+  return [1, 2, 3, 4, 5, 6, 7, 8];
 });
 
 // 根据九宫格位置获取对应的奖品名称
@@ -353,13 +433,34 @@ const toggleEditMode = () => {
     // 保存编辑 - 将临时数据复制到真实数据
     // 检查临时数组长度是否为8
     if (tempPrizeList.value.length !== 8) {
-      ElMessage.warning("奖品数量必须为8个才能保存并退出编辑");
+      console.log("[编辑模式] 临时奖品列表长度:", tempPrizeList.value.length);
+
+      // 找到对话框的主体元素
+      const dialogBody = document.querySelector(".el-dialog__body");
+      ElMessage.warning({
+        message: "奖品数量必须为8个才能保存并退出编辑",
+        duration: 2000,
+        zIndex: 99999,
+        appendTo: dialogBody,
+      });
       return;
     }
+    // 保存编辑 - 将临时数据复制到真实数据
     prizeList.value = JSON.parse(JSON.stringify(tempPrizeList.value));
+    console.log("[编辑模式] 保存设置，当前奖品列表:", prizeList.value);
+    dialogVisible.value = false;
+    isEditMode.value = false;
+
+    // 保存到本地存储
+    saveToLocalStorage(prizeList.value);
+
     console.log("[编辑模式] 保存编辑，更新真实奖品列表");
     isEditMode.value = false;
-    ElMessage.success("编辑保存成功");
+
+    // 保存到本地存储
+    saveToLocalStorage(prizeList.value);
+
+    ElMessage.success("设置保存成功");
   } else {
     // 进入编辑模式 - 复制真实数据到临时数据
     tempPrizeList.value = JSON.parse(JSON.stringify(prizeList.value));
@@ -449,7 +550,7 @@ const cancelEditMode = () => {
   ElMessage.info("已取消编辑，数据已恢复");
 };
 
-//
+//退出编辑模式
 const handleCancel = () => {
   if (isEditMode.value) {
     // 退出编辑模式，不保存更改
@@ -478,6 +579,10 @@ const saveSettings = () => {
   console.log("[编辑模式] 保存设置，当前奖品列表:", prizeList.value);
   dialogVisible.value = false;
   isEditMode.value = false;
+
+  // 保存到本地存储
+  saveToLocalStorage(prizeList.value);
+
   ElMessage.success("设置保存成功");
 };
 
@@ -538,65 +643,42 @@ const swapArrayElements = async (index1, index2) => {
   }, 300);
 };
 
-// 处理位置变化（编辑模式下）- 实现真正的数组下标交换
-const handlePositionChange = async (changedPrize, changedIndex) => {
+/**
+ * 编辑模式下，把两件奖品的位置互换
+ * @param changedPrize 被拖拽的奖品对象，必须带 oldIdx
+ */
+const handlePositionChange = async (changedPrize) => {
   if (!isEditMode.value) return;
 
-  console.log(
-    `[编辑模式] 奖品 "${changedPrize.name}" 位置变更为: ${changedPrize.index}`
+  const { id, name, required, index: currentIndex, oldIdx } = changedPrize;
+
+  // 1. 找到当前占着「新位置」的那件奖品 B对象
+  const targetPrize = tempPrizeList.value.find(
+    (p) => p.oldIdx === currentIndex
   );
+  if (!targetPrize) return; // 理论上不会走到这里
 
-  // 检查是否有其他奖品使用了相同的位置
-  const conflictIndex = tempPrizeList.value.findIndex((prize, index) => {
-    return prize.index === changedPrize.index && index !== changedIndex;
-  });
+  // 2. 交换
+  console.log("目标奖品:", targetPrize);
+  // 交换 index
+  const tempIndex = targetPrize.index;
+  targetPrize.index = oldIdx; // B 去 A 的老位置
+  changedPrize.index = tempIndex; // A 去新位置
+  // 交换 required
+  const tempRequired = targetPrize.required;
+  targetPrize.required = changedPrize.required;
+  changedPrize.required = tempRequired;
+  // 交换 name
+  const tempName = targetPrize.name;
+  targetPrize.name = changedPrize.name;
+  changedPrize.name = tempName;
 
-  if (conflictIndex !== -1) {
-    // 找到冲突的奖品，执行位置值交换（而不是数组元素交换）
-    const conflictPrize = tempPrizeList.value[conflictIndex];
-    const originalPosition = tempPrizeList.value[changedIndex].index;
+  // 3. 同步 oldIdx，为下一次拖拽做准备
+  targetPrize.oldIdx = targetPrize.index;
+  changedPrize.oldIdx = changedPrize.index;
 
-    console.log(
-      `[编辑模式] 检测到位置冲突: "${changedPrize.name}"(当前位置${originalPosition}) 与 "${conflictPrize.name}"(位置${changedPrize.index}) 需要交换位置值`
-    );
-
-    // 交换两个奖品的位置值
-    const tempValue = tempPrizeList.value[changedIndex];
-    tempPrizeList.value[changedIndex] = tempPrizeList.value[conflictIndex];
-    tempPrizeList.value[conflictIndex] = tempValue;
-
-    console.log(
-      `[编辑模式] 位置值交换完成: "${changedPrize.name}"现在位置是${tempPrizeList.value[changedIndex].index}, "${conflictPrize.name}"现在位置是${tempPrizeList.value[conflictIndex].index}`
-    );
-
-    // 触发动画效果
-    const table = document.querySelector(".prize-table");
-    if (table) {
-      table.classList.add("swapping");
-      setTimeout(() => {
-        if (table) {
-          table.classList.remove("swapping");
-        }
-      }, 300);
-    }
-
-    ElMessage.success(
-      `位置交换成功！"${conflictPrize.name}"与"${changedPrize.name}"已交换位置`
-    );
-  } else {
-    // 没有冲突，正常移动
-    ElMessage.success(
-      `"${changedPrize.name}"已成功移动到位置${changedPrize.index}`
-    );
-  }
-
-  console.log(
-    "[编辑模式] 当前临时奖品列表位置分布:",
-    tempPrizeList.value.map((p) => ({
-      name: p.name,
-      index: p.index,
-    }))
-  );
+  // 4. 如果还要立即写回后端，可以在这里发请求
+  // await savePrizeList([targetPrize, changedPrize]);
 };
 </script>
 

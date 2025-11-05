@@ -6,115 +6,35 @@
     </h1>
 
     <!-- 九宫格容器 -->
-    <div class="grid grid-cols-3 gap-4 w-80 h-80 mx-auto mb-8">
-      <!-- 格子1 (位置0) -->
+    <div class="flex flex-wrap w-400px h-400px" style="margin: 0 auto">
       <div
-        class="rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center p-2"
-        :class="
-          currentPosition === 0
-            ? 'bg-red-500 scale-110 shadow-xl'
-            : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
-        "
+        class="flex items-center justify-center w-1/3 h-1/3"
+        v-for="pos in 9"
+        :key="pos"
       >
-        {{ prizes[0] }}
-      </div>
-
-      <!-- 格子2 (位置1) -->
-      <div
-        class="rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center p-2"
-        :class="
-          currentPosition === 1
-            ? 'bg-red-500 scale-110 shadow-xl'
-            : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
-        "
-      >
-        {{ prizes[1] }}
-      </div>
-
-      <!-- 格子3 (位置2) -->
-      <div
-        class="rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center p-2"
-        :class="
-          currentPosition === 2
-            ? 'bg-red-500 scale-110 shadow-xl'
-            : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
-        "
-      >
-        {{ prizes[2] }}
-      </div>
-
-      <!-- 格子4 (位置3) -->
-      <div
-        class="rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center p-2"
-        :class="
-          currentPosition === 3
-            ? 'bg-red-500 scale-110 shadow-xl'
-            : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
-        "
-      >
-        {{ prizes[7] }}
-      </div>
-
-      <!-- 中心格子（开始按钮）位置4 -->
-      <div
-        @click="startLottery"
-        :disabled="isRunning"
-        class="rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-xl cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
-        :class="
-          isRunning
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-gradient-to-br from-purple-500 to-pink-500'
-        "
-      >
-        {{ isRunning ? "运行中" : "开始" }}
-      </div>
-
-      <!-- 格子6 (位置5) -->
-      <div
-        class="rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center p-2"
-        :class="
-          currentPosition === 5
-            ? 'bg-red-500 scale-110 shadow-xl'
-            : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
-        "
-      >
-        {{ prizes[3] }}
-      </div>
-
-      <!-- 格子7 (位置6) -->
-      <div
-        class="rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center p-2"
-        :class="
-          currentPosition === 6
-            ? 'bg-red-500 scale-110 shadow-xl'
-            : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
-        "
-      >
-        {{ prizes[6] }}
-      </div>
-
-      <!-- 格子8 (位置7) -->
-      <div
-        class="rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center p-2"
-        :class="
-          currentPosition === 7
-            ? 'bg-red-500 scale-110 shadow-xl'
-            : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
-        "
-      >
-        {{ prizes[5] }}
-      </div>
-
-      <!-- 格子9 (位置8) -->
-      <div
-        class="rounded-xl shadow-lg flex items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center p-2"
-        :class="
-          currentPosition === 8
-            ? 'bg-red-500 scale-110 shadow-xl'
-            : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
-        "
-      >
-        {{ prizes[4] }}
+        <div
+          v-if="pos === 5"
+          @click="startLottery"
+          class="rounded-xl shadow-lg h-[calc(100%-20px)] flex-1 flex m-10px items-center justify-center text-white font-bold text-xl cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
+          :class="
+            isRunning
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-gradient-to-br from-purple-500 to-pink-500'
+          "
+        >
+          开始抽奖
+        </div>
+        <div
+          v-else
+          class="rounded-xl shadow-lg h-[calc(100%-20px)] flex-1 flex m-10px items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center"
+          :class="
+            currentPosition === getPrizeNameByPosition(pos).id
+              ? 'bg-red-500 scale-110 shadow-xl'
+              : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
+          "
+        >
+          {{ getPrizeNameByPosition(pos).name }}
+        </div>
       </div>
     </div>
 
@@ -181,7 +101,7 @@ watch(currentPosition, (newPos) => {
  * 8 号格 → prizes[5]
  * 9 号格 → prizes[4]
  */
-const visual2Index = [0, 1, 2, 5, 8, 7, 6, 3];
+const visual2Index = [1, 2, 3, 4, 5, 6, 7, 8];
 
 // 计算奖品列表
 const prizes = computed(() => {
@@ -230,7 +150,7 @@ watch(
         console.log(
           `[奖品列表] 奖品${index + 1}: ID=${item.id}, 名称=${
             item.name
-          }, 位置=${item.index}, 必中=${item.required || false}`
+          }, 数组下标=${item.index}, 必中=${item.required || false}`
         );
       });
     }
@@ -335,6 +255,28 @@ const resetLottery = () => {
   isRunning.value = false;
   currentPosition.value = -1;
   finalResult.value = "";
+};
+
+// 根据九宫格位置获取对应的奖品名称
+const getPrizeNameByPosition = (position) => {
+  // 位置映射关系（根据注释中的映射）
+  const positionMap = {
+    1: 0, // 1号格 → prizes[0]
+    2: 1, // 2号格 → prizes[1]
+    3: 2, // 3号格 → prizes[2]
+    4: 7, // 4号格 → prizes[7]
+    6: 3, // 6号格 → prizes[3]
+    7: 6, // 7号格 → prizes[6]
+    8: 5, // 8号格 → prizes[5]
+    9: 4, // 9号格 → prizes[4]
+  };
+
+  const prizeIndex = positionMap[position];
+
+  if (prizeIndex !== undefined && props.list[prizeIndex]) {
+    return props.list[prizeIndex];
+  }
+  return "空";
 };
 
 /* ==========  把方法/状态暴露给父组件  ========== */
