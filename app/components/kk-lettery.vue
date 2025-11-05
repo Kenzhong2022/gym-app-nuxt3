@@ -1,17 +1,19 @@
 <template>
   <!-- 主要内容区域 -->
-  <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 w-full max-w-[95vw] sm:max-w-lg mx-auto">
-    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6 md:mb-8 text-gray-800">
+  <div
+    class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 w-full max-w-[95vw] sm:max-w-lg mx-auto"
+  >
+    <h1
+      class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6 md:mb-8 text-gray-800"
+    >
       九宫格抽奖
     </h1>
 
     <!-- 九宫格容器 -->
-    <div class="grid grid-cols-3 gap-1 sm:gap-2 md:gap-3 w-full max-w-[80vw] sm:max-w-[400px] mx-auto aspect-square">
-      <div
-        v-for="pos in 9"
-        :key="pos"
-        class="relative"
-      >
+    <div
+      class="grid grid-cols-3 gap-20px md:gap-30px w-full max-w-[80vw] sm:max-w-[400px] mx-auto aspect-square"
+    >
+      <div v-for="pos in 9" :key="pos" class="relative">
         <div
           v-if="pos === 5"
           @click="startLottery"
@@ -33,7 +35,9 @@
               : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
           "
         >
-          <span class="px-1 leading-tight">{{ getPrizeNameByPosition(pos).name }}</span>
+          <span class="px-1 leading-tight">{{
+            getPrizeNameByPosition(pos).name
+          }}</span>
         </div>
       </div>
     </div>
