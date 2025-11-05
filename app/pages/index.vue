@@ -1,15 +1,15 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4"
+    class="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-2 sm:p-4"
   >
     <!-- 侧边菜单按钮 -->
-    <div class="fixed top-4 left-4 z-50">
+    <div class="fixed top-2 left-2 sm:top-4 sm:left-4 z-50">
       <button
         @click="toggleMenu"
-        class="bg-white rounded-lg shadow-lg p-3 hover:shadow-xl transition-all duration-200 hover:scale-105"
+        class="bg-white rounded-lg shadow-lg p-2 sm:p-3 hover:shadow-xl transition-all duration-200 hover:scale-105"
       >
         <div
-          class="w-6 h-6 flex flex-col justify-center items-center space-y-1"
+          class="w-5 h-5 sm:w-6 sm:h-6 flex flex-col justify-center items-center space-y-0.5 sm:space-y-1"
         >
           <div class="w-full h-0.5 bg-gray-800 rounded-full"></div>
           <div class="w-full h-0.5 bg-gray-800 rounded-full"></div>
@@ -20,31 +20,31 @@
       <!-- 下拉菜单 -->
       <div
         v-if="isMenuOpen"
-        class="absolute top-16 left-0 bg-white rounded-lg shadow-xl py-2 w-48 transition-all duration-300 transform origin-top-left"
+        class="absolute top-12 left-0 sm:top-16 bg-white rounded-lg shadow-xl py-2 w-40 sm:w-48 transition-all duration-300 transform origin-top-left"
         :class="isMenuOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'"
       >
         <button
           @click="handleMenuItem('home')"
-          class="w-full px-4 py-3 text-left hover:bg-gray-100 transition-colors duration-200 text-gray-800 font-medium"
+          class="w-full px-3 py-2 sm:px-4 sm:py-3 text-left hover:bg-gray-100 transition-colors duration-200 text-gray-800 font-medium text-sm sm:text-base"
         >
           🏠 首页
         </button>
         <button
           @click="handleMenuItem('lottery')"
-          class="w-full px-4 py-3 text-left hover:bg-gray-100 transition-colors duration-200 text-gray-800 font-medium"
+          class="w-full px-3 py-2 sm:px-4 sm:py-3 text-left hover:bg-gray-100 transition-colors duration-200 text-gray-800 font-medium text-sm sm:text-base"
         >
           🎲 抽奖
         </button>
         <button
           @click="handleMenuItem('settings')"
-          class="w-full px-4 py-3 text-left hover:bg-gray-100 transition-colors duration-200 text-gray-800 font-medium"
+          class="w-full px-3 py-2 sm:px-4 sm:py-3 text-left hover:bg-gray-100 transition-colors duration-200 text-gray-800 font-medium text-sm sm:text-base"
         >
           ⚙️ 设置
         </button>
         <div class="border-t border-gray-200 my-1"></div>
         <button
           @click="handleMenuItem('logout')"
-          class="w-full px-4 py-3 text-left hover:bg-red-50 hover:text-red-600 transition-colors duration-200 text-gray-800 font-medium"
+          class="w-full px-3 py-2 sm:px-4 sm:py-3 text-left hover:bg-red-50 hover:text-red-600 transition-colors duration-200 text-gray-800 font-medium text-sm sm:text-base"
         >
           🚪 退出
         </button>
@@ -55,53 +55,68 @@
     <el-dialog
       v-model="dialogVisible"
       title="设置"
-      width="600px"
+      width="95vw"
+      width-sm="600px"
       :before-close="handleClose"
       class="z-10"
     >
-      <h3 class="text-lg font-medium mb-4">奖品管理</h3>
+      <h3 class="text-base sm:text-lg font-medium mb-3 sm:mb-4">奖品管理</h3>
       <!-- 位置变化提示 -->
       <div
-        class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg"
+        class="mb-3 sm:mb-4 p-2 sm:p-3 bg-blue-50 border border-blue-200 rounded-lg"
         v-if="isEditMode"
       >
-        <p class="text-sm text-blue-800">
+        <p class="text-xs sm:text-sm text-blue-800">
           <span class="font-medium">💡 提示：</span>
           更改奖品位置时，如果目标位置已被占用，系统会自动将冲突的奖品移动到第一个空闲可用位置。[顺时针从左上角开始是
           0 ]
         </p>
       </div>
       <!-- 奖品设置 -->
-      <div class="p-4">
+      <div class="p-2 sm:p-4">
         <!-- 奖品表格 -->
         <el-table
           :data="isEditMode ? tempPrizeList : prizeList"
           style="width: 100%"
-          class="mb-4 prize-table"
+          class="mb-3 sm:mb-4 prize-table"
           row-class-name="prize-row"
         >
-          <el-table-column prop="id" label="九宫格位置" width="120" />
-          <el-table-column label="奖品名称" width="180">
+          <el-table-column
+            prop="id"
+            label="位置"
+            width="80"
+            class-name="hidden-xs-only"
+          />
+          <el-table-column
+            prop="id"
+            label="位置"
+            width="60"
+            class-name="hidden-sm-and-up"
+          />
+          <el-table-column label="奖品名称" min-width="120">
             <template #default="scope">
               <el-input
                 v-if="isEditMode"
                 v-model="scope.row.name"
                 size="small"
-                placeholder="请输入奖品名称"
+                placeholder="奖品名称"
               />
-              <span v-else>{{ scope.row.name }}</span>
+              <span v-else class="text-sm sm:text-base">{{
+                scope.row.name
+              }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="必中" width="80">
+          <el-table-column label="必中" width="60">
             <template #default="scope">
               <el-switch
                 v-model="scope.row.required"
                 @change="handleRequiredChange(scope.row)"
                 :disabled="!isEditMode"
+                size="small"
               />
             </template>
           </el-table-column>
-          <el-table-column label="交换位置" width="80">
+          <el-table-column label="位置" width="70">
             <template #default="scope">
               <el-select
                 v-if="isEditMode"
@@ -117,10 +132,10 @@
                   :value="pos"
                 />
               </el-select>
-              <span v-else>{{ scope.row.index }}</span>
+              <span v-else class="text-sm">{{ scope.row.index }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="100">
+          <el-table-column label="操作" width="80">
             <template #default="scope">
               <el-button
                 size="small"
@@ -133,21 +148,24 @@
           </el-table-column>
         </el-table>
         <!-- 编辑模式切换按钮 -->
-        <div class="mb-4 flex justify-between items-center">
+        <div
+          class="mb-3 sm:mb-4 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2"
+        >
           <el-button
             v-if="!isEditMode"
             @click="resetToDefault"
             size="small"
             type="warning"
+            class="w-full sm:w-auto"
           >
             🔄 重置默认
           </el-button>
-          <div class="flex justify-end">
+          <div class="flex justify-end gap-2">
             <el-button
               v-if="isEditMode"
               @click="cancelEditMode"
               size="small"
-              class="mr-2"
+              class="flex-1 sm:flex-none"
             >
               取消编辑
             </el-button>
@@ -155,40 +173,53 @@
               :type="isEditMode ? 'success' : 'primary'"
               @click="toggleEditMode"
               size="small"
+              class="flex-1 sm:flex-none"
             >
               {{ isEditMode ? "保存编辑" : "编辑模式" }}
             </el-button>
           </div>
         </div>
         <!-- 新增奖品表单 -->
-        <div class="flex gap-2 mb-4" v-if="isEditMode">
+        <div
+          class="flex flex-col sm:flex-row gap-2 mb-3 sm:mb-4"
+          v-if="isEditMode"
+        >
           <el-input
             v-model="newPrize.name"
             placeholder="奖品名称"
             style="flex: 1"
+            size="small"
           />
-          <el-button type="primary" @click="addPrize">新增</el-button>
+          <el-button
+            type="primary"
+            @click="addPrize"
+            size="small"
+            class="w-full sm:w-auto"
+            >新增</el-button
+          >
         </div>
       </div>
-      <h3 class="text-lg font-medium mb-4">奖品预览</h3>
+      <h3 class="text-base sm:text-lg font-medium mb-3 sm:mb-4">奖品预览</h3>
       <!-- 九宫格奖品位置预览 -->
-      <div class="grid grid-cols-3 gap-2">
+      <div class="grid grid-cols-3 gap-1 sm:gap-2 text-xs sm:text-sm">
         <div
           v-for="pos in 9"
           :key="pos"
-          class="bg-gray-200 flex items-center justify-center p-2 text-sm rounded-md"
+          class="bg-gray-200 flex items-center justify-center p-1 sm:p-2 rounded-md aspect-square"
           :class="{ 'bg-gray-400': pos === 5 }"
         >
-          <template v-if="pos === 5"> 中心按钮 </template>
+          <template v-if="pos === 5"> 中心 </template>
           <template v-else>
-            {{ getPrizeNameByPosition(pos) }}
+            <span class="truncate">{{ getPrizeNameByPosition(pos) }}</span>
           </template>
         </div>
       </div>
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button size="large" @click="handleCancel">返回首页</el-button>
+          <el-button size="large" @click="handleCancel" class="w-full"
+            >返回首页</el-button
+          >
         </span>
       </template>
     </el-dialog>
@@ -200,6 +231,7 @@
       :isRandom="false"
       @lottery-start="handleLotteryStart"
       @lottery-end="handleLotteryEnd"
+      class="w-full max-w-[90vw] max-h-[90vh]"
     />
   </div>
 </template>
@@ -282,11 +314,11 @@ const initializePrizeList = () => {
   console.log("[初始化] 使用默认奖品数据");
   // 默认奖品数据
   return [
-    { id: 1, name: "AI分析儀", required: false, index: 1, oldIdx: 1 },
-    { id: 2, name: "藍牙耳機", required: false, index: 2, oldIdx: 2 },
+    { id: 1, name: "AI分析仪", required: false, index: 1, oldIdx: 1 },
+    { id: 2, name: "蓝牙耳机", required: false, index: 2, oldIdx: 2 },
     { id: 3, name: "VIP卡", required: false, index: 3, oldIdx: 3 },
-    { id: 4, name: "AI分析儀", required: false, index: 4, oldIdx: 4 },
-    { id: 5, name: "藍牙耳機", required: false, index: 5, oldIdx: 5 },
+    { id: 4, name: "AI分析仪", required: false, index: 4, oldIdx: 4 },
+    { id: 5, name: "蓝牙耳机", required: false, index: 5, oldIdx: 5 },
     { id: 6, name: "VIP卡", required: false, index: 6, oldIdx: 6 },
     { id: 7, name: "AI分析仪", required: false, index: 7, oldIdx: 7 },
     { id: 8, name: "蓝牙耳机", required: true, index: 8, oldIdx: 8 },
@@ -682,6 +714,7 @@ const handlePositionChange = async (changedPrize) => {
 };
 </script>
 
+<!-- 在 style 标签中添加移动端适配样式 -->
 <style scoped>
 /* 表格交换动画 */
 .prize-table.swapping .el-table__body-wrapper {
@@ -697,28 +730,193 @@ const handlePositionChange = async (changedPrize) => {
 }
 
 @keyframes slideDown {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
   }
-  50% {
-    transform: translateY(10px);
-    opacity: 0.7;
-  }
-  100% {
+  to {
     transform: translateY(0);
     opacity: 1;
   }
 }
 
-/* 行高亮效果 */
-.prize-table .el-table__row:hover {
-  background-color: #f5f7fa;
-  transition: background-color 0.2s ease;
+/* 移动端适配样式 */
+@media (max-width: 768px) {
+  /* 隐藏元素类 */
+  .hidden-xs-only {
+    display: none !important;
+  }
+
+  /* 对话框样式优化 */
+  :deep(.el-dialog) {
+    margin: 10px auto;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+
+  :deep(.el-dialog__body) {
+    padding: 15px;
+  }
+
+  /* 表格样式优化 */
+  :deep(.el-table) {
+    font-size: 12px;
+  }
+
+  :deep(.el-table th) {
+    padding: 8px 4px !important;
+  }
+
+  :deep(.el-table td) {
+    padding: 8px 4px !important;
+  }
+
+  /* 输入框样式优化 */
+  :deep(.el-input__inner) {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  /* 按钮样式优化 */
+  :deep(.el-button--small) {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  /* 选择框样式优化 */
+  :deep(.el-select--small) {
+    width: 100%;
+  }
+
+  :deep(.el-select--small .el-input__inner) {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  /* 开关样式优化 */
+  :deep(.el-switch--small) {
+    transform: scale(0.9);
+  }
 }
 
-/* 交换时的特殊效果 */
-.prize-table.swapping .el-table__row {
-  background-color: #e6f7ff;
+@media (min-width: 769px) {
+  .hidden-sm-and-up {
+    display: none !important;
+  }
+}
+
+/* 响应式字体大小 */
+.responsive-text {
+  font-size: clamp(12px, 2.5vw, 16px);
+}
+
+/* 响应式按钮 */
+.responsive-button {
+  padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 20px);
+  font-size: clamp(12px, 2vw, 14px);
+}
+
+/* 响应式间距 */
+.responsive-padding {
+  padding: clamp(8px, 2vw, 16px);
+}
+
+/* 九宫格预览样式优化 */
+.grid-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(4px, 1vw, 8px);
+}
+
+.grid-preview-item {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(10px, 2vw, 14px);
+  padding: clamp(4px, 1vw, 8px);
+  border-radius: 6px;
+  word-break: break-all;
+  line-height: 1.2;
+}
+
+/* 抽奖组件容器 */
+.lottery-container {
+  width: 100%;
+  max-width: min(90vw, 500px);
+  max-height: min(90vh, 500px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+/* 菜单按钮动画 */
+.menu-button {
+  transition: all 0.2s ease;
+  transform-origin: center;
+}
+
+.menu-button:active {
+  transform: scale(0.95);
+}
+
+/* 下拉菜单动画优化 */
+.dropdown-menu {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top left;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* 移动端触摸优化 */
+@media (hover: none) and (pointer: coarse) {
+  .touch-optimized {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .touch-button {
+    padding: 12px 16px;
+    font-size: 16px; /* 防止iOS缩放 */
+  }
+}
+
+/* 防止横向滚动 */
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* 弹性布局优化 */
+.flex-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 2vw, 16px);
+}
+
+@media (min-width: 640px) {
+  .flex-responsive {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* 表格响应式处理 */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table {
+  min-width: 320px;
+  width: 100%;
+}
+
+/* 文字截断优化 */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

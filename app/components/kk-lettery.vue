@@ -1,21 +1,21 @@
 <template>
   <!-- 主要内容区域 -->
-  <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full">
-    <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
+  <div class="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 w-full max-w-[95vw] sm:max-w-lg mx-auto">
+    <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 sm:mb-6 md:mb-8 text-gray-800">
       九宫格抽奖
     </h1>
 
     <!-- 九宫格容器 -->
-    <div class="flex flex-wrap w-400px h-400px" style="margin: 0 auto">
+    <div class="grid grid-cols-3 gap-1 sm:gap-2 md:gap-3 w-full max-w-[80vw] sm:max-w-[400px] mx-auto aspect-square">
       <div
-        class="flex items-center justify-center w-1/3 h-1/3"
         v-for="pos in 9"
         :key="pos"
+        class="relative"
       >
         <div
           v-if="pos === 5"
           @click="startLottery"
-          class="rounded-xl shadow-lg h-[calc(100%-20px)] flex-1 flex m-10px items-center justify-center text-white font-bold text-xl cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
+          class="rounded-lg sm:rounded-xl shadow-lg w-full h-full flex items-center justify-center text-white font-bold text-sm sm:text-base md:text-xl cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 select-none"
           :class="
             isRunning
               ? 'bg-gray-400 cursor-not-allowed'
@@ -26,14 +26,14 @@
         </div>
         <div
           v-else
-          class="rounded-xl shadow-lg h-[calc(100%-20px)] flex-1 flex m-10px items-center justify-center text-white font-bold text-sm transition-all duration-300 text-center"
+          class="rounded-lg sm:rounded-xl shadow-lg w-full h-full flex items-center justify-center text-white font-bold text-xs sm:text-sm md:text-base transition-all duration-300 text-center select-none"
           :class="
             currentPosition === getPrizeNameByPosition(pos).id
               ? 'bg-red-500 scale-110 shadow-xl'
               : 'bg-gradient-to-br from-orange-400 to-red-500 hover:scale-105'
           "
         >
-          {{ getPrizeNameByPosition(pos).name }}
+          <span class="px-1 leading-tight">{{ getPrizeNameByPosition(pos).name }}</span>
         </div>
       </div>
     </div>
@@ -41,16 +41,16 @@
     <!-- 结果显示 -->
     <div
       v-if="finalResult"
-      class="mt-6 p-4 bg-green-100 rounded-lg text-center"
+      class="mt-4 sm:mt-6 p-3 sm:p-4 bg-green-100 rounded-lg text-center"
     >
-      <p class="text-green-800 font-bold text-lg">
+      <p class="text-green-800 font-bold text-base sm:text-lg">
         🎉 恭喜获得: {{ finalResult }}
       </p>
     </div>
 
     <!-- 说明 -->
-    <div class="mt-6 text-center text-gray-600 text-sm">
-      <p class="mt-2">点击中心"开始"按钮开始抽奖</p>
+    <div class="mt-4 sm:mt-6 text-center text-gray-600 text-xs sm:text-sm">
+      <p class="mt-1 sm:mt-2">点击中心"开始"按钮开始抽奖</p>
     </div>
   </div>
 </template>
